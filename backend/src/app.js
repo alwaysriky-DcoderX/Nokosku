@@ -1,6 +1,7 @@
 // NOKOSKU Backend Starter
 // Bahasa kode: English, komentar: Indonesia
 const express = require('express');
+const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const sequelize = require('../models/db'); // Import sequelize
@@ -10,6 +11,13 @@ const app = express();
 const path = require('path');
 
 app.use(helmet());
+// Izinkan akses dari frontend Vite (lokal) dan host lain via env
+const allowedOrigin = process.env.FRONTEND_ORIGIN || '*';
+app.use(cors({
+  origin: allowedOrigin,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Serve static files
@@ -63,4 +71,3 @@ app.use('/api/v1/orders', require('../routes/order'));
 app.use('/api/v1/admin', require('../routes/admin'));
 
 module.exports = app;
-
