@@ -1,0 +1,30 @@
+/* styles/theme.css - Theme variables */
+:root {
+  --bg: #ffffff;
+  --bg-muted: #f8f9fa;
+  --text: #212529;
+  --text-muted: #6c757d;
+  --border: #dee2e6;
+  --primary: #007bff;
+  --success: #28a745;
+  --danger: #dc3545;
+  --warning: #ffc107;
+}
+
+[data-theme="dark"] {
+  --bg: #121212;
+  --bg-muted: #1e1e1e;
+  --text: #ffffff;
+  --text-muted: #b0b0b0;
+  --border: #333333;
+  --primary: #0d6efd;
+  --success: #198754;
+  --danger: #dc3545;
+  --warning: #fd7e14;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', sans-serif;
+}
