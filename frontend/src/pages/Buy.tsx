@@ -197,7 +197,7 @@ export function Buy() {
                          loading="lazy"
                          onError={(e) => { e.currentTarget.src = '/vite.svg'; }}
                        />
-                       <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{country.name} (+{country.prefix})</div>
+                       <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{country.name} {country.prefix}</div>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div className="muted" style={{ fontSize: '0.8rem' }}>
@@ -306,7 +306,7 @@ export function Buy() {
             <>
               <div style={{ textAlign: 'center', padding: 20, background: 'var(--surface)', borderRadius: 12 }}>
                 <div style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 8 }}>
-                   {selectedService.service_name} - {selectedCountry.name} (+{selectedCountry.prefix}) - {selectedOperator?.name}
+                    {selectedService.service_name} - {selectedCountry.name} {selectedCountry.prefix} - {selectedOperator?.name}
                 </div>
                 <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
                   Nomor: {quote.phone_number} · Status: {quote.status}
