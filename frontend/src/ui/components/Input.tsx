@@ -13,17 +13,25 @@ export function Input({ label, icon, rightSlot, type = 'text', ...rest }: Props)
 
   return (
     <div className="form-field">
-      {label && <label style={{ fontWeight: 600 }}>{label}</label>}
-      <div className="input-wrapper">
-        {icon && <i className={`bi ${icon}`} style={{ color: 'var(--muted)' }} />}
-        <input type={isPassword ? (show ? 'text' : 'password') : type} {...rest} />
+      {label && <label className="form-label" style={{ fontWeight: 600 }}>{label}</label>}
+      <div className="input-group">
+        {icon && (
+          <span className="input-group-text">
+            <i className={`bi ${icon}`}></i>
+          </span>
+        )}
+        <input
+          className="form-control"
+          type={isPassword ? (show ? 'text' : 'password') : type}
+          {...rest}
+        />
         {isPassword && (
           <button
+            className="btn btn-outline-secondary"
             type="button"
             onClick={() => setShow(s => !s)}
-            style={{ background: 'transparent', border: 'none', color: 'var(--muted)' }}
           >
-            <i className={`bi ${show ? 'bi-eye-slash' : 'bi-eye'}`} />
+            <i className={`bi ${show ? 'bi-eye-slash' : 'bi-eye'}`}></i>
           </button>
         )}
         {rightSlot}

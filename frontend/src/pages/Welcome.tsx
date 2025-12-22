@@ -10,7 +10,7 @@ export function Welcome() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 18, textAlign: 'left' }}>
         <CatLottie variant="welcome" size="lg" />
         <div>
-          <h2 style={{ margin: '10px 0', fontSize: 26 }}>Beli nomor OTP, tanpa ribet.</h2>
+          <h2 style={{ margin: '10px 0', fontSize: 26 }} className="nokosku-font">Beli nomor OTP, tanpa ribet.</h2>
           <div className="muted">Pilih aplikasi → bayar → OTP masuk realtime.</div>
         </div>
         <button className="primary-btn" onClick={() => navigate('/login')}>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { cancelDeposit, getDeposit } from '../api/deposit';
@@ -7,8 +7,8 @@ import { Badge } from '../ui/components/Badge';
 import { CatLottie } from '../ui/components/CatLottie';
 import { formatMoney } from '../utils/formatMoney';
 import { formatRelativeMinutes } from '../utils/formatTime';
-import { useToast } from '../ui/components/Toast';
-import { useSocket } from '../app/socket';
+import { useToast } from '../ui/hooks/useToast';
+import { useSocket } from '../app/hooks/useSocket';
 
 export function DepositDetail() {
   const { id } = useParams();
@@ -28,12 +28,13 @@ export function DepositDetail() {
   });
 
   const deposit = data?.deposit;
-  const status = data?.status || deposit?.status;
+  const status = deposit?.status;
 
   useEffect(() => {
     if (!socket) return;
-    const paidHandler = (payload: any) => {
-      if (payload?.deposit_id?.toString() === id) {
+     const paidHandler = (payload: unknown) => {
+       const p = payload as { deposit_id?: string | number };
+       if (p?.deposit_id?.toString() === id) {
         queryClient.invalidateQueries({ queryKey: ['deposit', id] });
         toast.push({ type: 'success', title: 'Saldo udah masuk.' });
       }
@@ -48,22 +49,38 @@ export function DepositDetail() {
     status === 'success' ? 'success' : status === 'pending' ? 'warning' : status === 'cancel' ? 'muted' : 'danger';
 
   const handleCancel = async () => {
-    if (!id) return;
+    console.log(`Frontend cancel: id=${id}, status=${status}`);
+    if (!id || status !== 'pending') {
+      toast.push({ type: 'error', title: 'Deposit tidak bisa dicancel.' });
+      return;
+    }
     try {
       await cancelDeposit(id);
       toast.push({ type: 'info', title: 'Deposit dibatalkan.' });
+      queryClient.invalidateQueries({ queryKey: ['deposit', id] });
+      // Update local data immediately
+      queryClient.setQueryData(['deposit', id], (oldData: any) => ({
+        ...oldData,
+        deposit: { ...oldData.deposit, status: 'cancel' }
+      }));
       refetch();
-    } catch (error: any) {
-      const message = error?.response?.data?.error || 'Gagal cancel.';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { error?: string } } };
+      const message = err?.response?.data?.error || 'Gagal cancel.';
+      console.log('Cancel error:', err);
       toast.push({ type: 'error', title: message });
     }
   };
 
   const qrImage =
-    deposit?.provider_response?.qr_image ||
-    deposit?.provider_response?.qr_url ||
-    deposit?.provider_response?.qr ||
-    deposit?.provider_response?.payment_qr_image;
+    (deposit?.provider_response as any)?.qr_image ||
+    (deposit?.provider_response as any)?.qr_url ||
+    (deposit?.provider_response as any)?.qr ||
+    (deposit?.provider_response as any)?.payment_qr_image;
+
+  const expiresIn = useMemo(() => status === 'pending' && deposit?.expires_at
+    ? formatRelativeMinutes(new Date(deposit.expires_at).getTime() - Date.now())
+    : null, [status, deposit?.expires_at]);
 
   return (
     <Page title="Detail Deposit" showBack>
@@ -72,7 +89,7 @@ export function DepositDetail() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Badge label={status || deposit.status} tone={badgeTone as any} />
+            <Badge label={status || deposit.status} tone={badgeTone} />
             <div style={{ fontWeight: 700 }}>{formatMoney(deposit.nominal)}</div>
           </div>
 
@@ -95,24 +112,26 @@ export function DepositDetail() {
                   />
                 </div>
               )}
-              {deposit.provider_response?.qr_string && (
+              {(deposit.provider_response as any)?.qr_string && (
                 <div className="muted" style={{ wordBreak: 'break-all' }}>
-                  {deposit.provider_response.qr_string}
+                  {(deposit.provider_response as any).qr_string}
                 </div>
               )}
-              {status === 'pending' && deposit.expires_at && (
+              {expiresIn && (
                 <div className="muted">
-                  Kadaluarsa {formatRelativeMinutes(new Date(deposit.expires_at).getTime() - Date.now())}
+                  Kadaluarsa {expiresIn}
                 </div>
               )}
-              <div className="two-col">
-                <button className="primary-btn" type="button" onClick={() => refetch()}>
-                  Saya sudah bayar
-                </button>
-                <button className="ghost-btn" type="button" onClick={handleCancel}>
-                  Batalkan
-                </button>
-              </div>
+               <div className="two-col">
+                 <button className="primary-btn" type="button" onClick={() => refetch()}>
+                   Saya sudah bayar
+                 </button>
+                 {status === 'pending' && (
+                   <button className="ghost-btn" type="button" onClick={handleCancel}>
+                     Batalkan
+                   </button>
+                 )}
+               </div>
             </>
           )}
         </div>

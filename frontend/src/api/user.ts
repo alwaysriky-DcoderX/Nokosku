@@ -8,6 +8,13 @@ export type Profile = {
   is_banned?: boolean;
 };
 
+export type Transaction = {
+  id: number;
+  amount: number;
+  type: string;
+  created_at: string;
+};
+
 export async function getProfile() {
   const { data } = await http.get<{ success: boolean; profile: Profile }>('/api/v1/user/profile');
   return data.profile;
@@ -24,6 +31,6 @@ export async function getBalance() {
 }
 
 export async function getTransactions() {
-  const { data } = await http.get<{ success: boolean; transactions: any[] }>('/api/v1/user/transactions');
+   const { data } = await http.get<{ success: boolean; transactions: Transaction[] }>('/api/v1/user/transactions');
   return data.transactions;
 }

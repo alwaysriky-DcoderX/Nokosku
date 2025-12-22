@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { getDepositHistory } from '../api/deposit';
 import { getOrderHistory } from '../api/orders';
-import { useAuth } from '../app/auth';
+import { useAuth } from '../app/hooks/useAuth';
 import { Page } from '../ui/layouts/Page';
 import { formatMoney } from '../utils/formatMoney';
 import { formatDateTime } from '../utils/formatTime';
@@ -45,7 +45,7 @@ export function Home() {
           <div className="muted" style={{ fontSize: '0.9rem' }}>
             Hai,
           </div>
-          <div style={{ fontWeight: 700 }}>{profile?.name || profile?.email}</div>
+          <div style={{ fontWeight: 700, color: 'var(--text)' }}>{profile?.name || profile?.email}</div>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 10 }}>
           <button
@@ -63,7 +63,12 @@ export function Home() {
         </div>
       </div>
 
-      <div className="balance-block">
+      <div className="balance-block" style={{
+        backgroundImage: 'url(https://files.catbox.moe/3rzjcw.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}>
         <div className="muted">Saldo kamu</div>
         <div style={{ fontSize: 28, fontWeight: 800 }}>{formatMoney(profile?.balance || 0)}</div>
         <button
@@ -76,21 +81,17 @@ export function Home() {
       </div>
 
       <div className="action-grid">
-        <div className="action-tile" onClick={() => navigate('/buy')}>
-          <i className="bi bi-bag-check" />
-          <span>Beli OTP</span>
+        <div className="action-tile" onClick={() => navigate('/buy')} style={{ borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+          <i className="bi bi-bag-check" style={{ fontSize: '1.5rem' }} />
         </div>
-        <div className="action-tile" onClick={() => navigate('/deposit')}>
-          <i className="bi bi-wallet2" />
-          <span>Topup</span>
+        <div className="action-tile" onClick={() => navigate('/deposit')} style={{ borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+          <i className="bi bi-wallet2" style={{ fontSize: '1.5rem' }} />
         </div>
-        <div className="action-tile" onClick={() => navigate('/orders')}>
-          <i className="bi bi-clock-history" />
-          <span>Riwayat</span>
+        <div className="action-tile" onClick={() => navigate('/orders')} style={{ borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+          <i className="bi bi-clock-history" style={{ fontSize: '1.5rem' }} />
         </div>
-        <div className="action-tile" onClick={() => navigate('/settings')}>
-          <i className="bi bi-headset" />
-          <span>Bantuan</span>
+        <div className="action-tile" onClick={() => navigate('/settings')} style={{ borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+          <i className="bi bi-three-dots" style={{ fontSize: '1.5rem' }} />
         </div>
       </div>
 

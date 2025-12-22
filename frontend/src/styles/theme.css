@@ -1,43 +1,50 @@
 /* Theme variables dan switch light/dark */
 :root {
   color-scheme: light dark;
-  --bg: #0b0c10;
-  --surface: #11131a;
-  --text: #eef2ff;
-  --muted: #9ea8c7;
-  --border: #1d2230;
-  --primary: #4cc0ff;
-  --success: #5be7a9;
-  --danger: #ff7b7b;
-  --warning: #ffc861;
+  --bg: #f8f9fa;
+  --surface: #ffffff;
+  --text: #1a2a3a;
+  --muted: #5b8cba;
+  --border: #3a5f8a;
+  --primary: #3a5f8a;
+  --success: #28a745;
+  --danger: #dc3545;
+  --warning: #ffc107;
+  --accent-color: #5b8cba;
+  --pixel-border: 2px solid #000;
   --nav-height: 64px;
-  --radius: 14px;
+  --radius: 8px;
   --shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.2);
-  --font-main: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-main: "Roboto", sans-serif;
+  --font-heading: "Press Start 2P", monospace;
 }
 
 [data-theme='light'] {
   color-scheme: light;
-  --bg: #f8f9fb;
+  --bg: #f8f9fa;
   --surface: #ffffff;
-  --text: #1f2430;
-  --muted: #6c7485;
-  --border: #e5e7ef;
-  --primary: #2563eb;
-  --success: #10b981;
-  --danger: #ef4444;
-  --warning: #f59e0b;
+  --text: #1a2a3a;
+  --muted: #5b8cba;
+  --border: #3a5f8a;
+  --primary: #3a5f8a;
+  --success: #28a745;
+  --danger: #dc3545;
+  --warning: #ffc107;
+  --accent-color: #5b8cba;
 }
 
 [data-theme='dark'] {
   color-scheme: dark;
-  --bg: #0b0c10;
-  --surface: #11131a;
-  --text: #eef2ff;
-  --muted: #9ea8c7;
-  --border: #1d2230;
-  --primary: #4cc0ff;
-  --success: #5be7a9;
-  --danger: #ff7b7b;
-  --warning: #ffc861;
+  --bg: #1a1a2e;
+  --surface: #1a2a3a;
+  --text: #ffffff;
+  --muted: #5b8cba;
+  --border: #3a5f8a;
+  --primary: #3a5f8a;
+  --success: #28a745;
+  --danger: #dc3545;
+  --warning: #ffc107;
+  --accent-color: #5b8cba;
+  --font-main: 'Press Start 2P', monospace;
+  --font-heading: 'Press Start 2P', monospace;
 }

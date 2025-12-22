@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useRoutes } from 'react-router-dom';
-import { useAuth } from './auth';
+import { useAuth } from './hooks/useAuth';
 import { Splash } from '../pages/Splash';
 import { Welcome } from '../pages/Welcome';
 import { Login } from '../pages/Login';
@@ -8,7 +8,7 @@ import { Home } from '../pages/Home';
 import { Deposit } from '../pages/Deposit';
 import { DepositDetail } from '../pages/DepositDetail';
 import { Buy } from '../pages/Buy';
-import { Orders } from '../pages/Orders';
+import { Riwayat } from '../pages/Orders';
 import { OrderDetail } from '../pages/OrderDetail';
 import { Profile } from '../pages/Profile';
 import { Settings } from '../pages/Settings';
@@ -35,7 +35,7 @@ export function AppRoutes() {
         { path: '/deposit', element: <Deposit /> },
         { path: '/deposit/:id', element: <DepositDetail /> },
         { path: '/buy', element: <Buy /> },
-        { path: '/orders', element: <Orders /> },
+        { path: '/riwayat', element: <Riwayat /> },
         { path: '/orders/:id', element: <OrderDetail /> },
         { path: '/profile', element: <Profile /> },
         { path: '/settings', element: <Settings /> }

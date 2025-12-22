@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { login as loginApi, register as registerApi } from '../api/auth';
@@ -15,7 +15,7 @@ type AuthContextType = {
   logout: () => void;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string>(() => getStoredToken());
@@ -28,24 +28,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     enabled: !!token
   });
 
-  const login = async (payload: { email: string; password: string }) => {
+  const login = useCallback(async (payload: { email: string; password: string }) => {
     const res = await loginApi(payload);
     setStoredToken(res.token);
     setToken(res.token);
     await queryClient.invalidateQueries({ queryKey: ['profile'] });
-  };
+  }, [queryClient]);
 
-  const register = async (payload: { email: string; password: string; name?: string }) => {
+  const register = useCallback(async (payload: { email: string; password: string; name?: string }) => {
     await registerApi(payload);
     await login({ email: payload.email, password: payload.password });
-  };
+  }, [login]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setStoredToken('');
     setToken('');
     queryClient.clear();
     navigate('/login', { replace: true });
-  };
+  }, [queryClient, navigate]);
 
   const value = useMemo(
     () => ({
@@ -56,14 +56,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       register,
       logout
     }),
-    [token, profile, isProfileLoading]
+    [token, profile, isProfileLoading, login, register, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth harus di dalam AuthProvider');
-  return ctx;
-}
+

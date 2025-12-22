@@ -8,4 +8,5 @@ router.get('/', verifyToken, profileController.getProfile);
 router.put('/', verifyToken, profileController.updateProfile);
 router.get('/balance', verifyToken, profileController.getBalance);
 router.get('/transactions', verifyToken, profileController.getTransactions);
+router.get('/activities', verifyToken, profileController.getActivities);
 module.exports = router;

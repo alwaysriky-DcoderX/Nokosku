@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BottomNav } from '../ui/components/BottomNav';
-import { useAuth } from './auth';
-import { useTheme } from './theme';
+import { useAuth } from './hooks/useAuth';
+import { useTheme } from './hooks/useTheme';
 import { preloadLotties } from './lottie-preload';
 
 export function AppShell({ children }: { children: ReactNode }) {

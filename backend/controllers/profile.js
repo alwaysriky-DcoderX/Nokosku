@@ -1,5 +1,6 @@
 // Controller Profile NOKOSKU
 const User = require('../models/user');
+const Activity = require('../models/activity');
 
 // Get profile
 exports.getProfile = async (req, res) => {
@@ -46,5 +47,19 @@ exports.getTransactions = async (req, res) => {
     res.json({ success: true, transactions });
   } catch (e) {
     res.status(500).json({ error: 'Maaf, sistem error transactions.' });
+  }
+};
+
+// Get activities history
+exports.getActivities = async (req, res) => {
+  try {
+    const activities = await Activity.findAll({
+      where: { user_id: req.user.id },
+      limit: 50,
+      order: [['created_at', 'DESC']]
+    });
+    res.json({ success: true, activities });
+  } catch (e) {
+    res.status(500).json({ error: 'Maaf, sistem error activities.' });
   }
 };

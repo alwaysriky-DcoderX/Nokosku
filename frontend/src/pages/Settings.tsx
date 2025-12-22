@@ -1,18 +1,31 @@
 import { useState } from 'react';
 import { Page } from '../ui/layouts/Page';
-import { useTheme } from '../app/theme';
-import { useToast } from '../ui/components/Toast';
+import { useTheme } from '../app/hooks/useTheme';
+import { useToast } from '../ui/hooks/useToast';
 
 export function Settings() {
   const { theme, setTheme } = useTheme();
   const toast = useToast();
-  const [notifStatus, setNotifStatus] = useState(Notification.permission);
+  const [notifStatus, setNotifStatus] = useState(
+    typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'default'
+  );
 
   const requestNotif = () => {
-    Notification.requestPermission().then(status => {
-      setNotifStatus(status);
-      toast.push({ type: 'info', title: status === 'granted' ? 'Siap kabarin lewat browser.' : 'Notif ditolak.' });
-    });
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission === 'granted') {
+        setNotifStatus('granted');
+        toast.push({ type: 'info', title: 'Notifikasi sudah aktif.' });
+      } else {
+        Notification.requestPermission().then(status => {
+          setNotifStatus(status);
+          toast.push({ type: 'info', title: status === 'granted' ? 'Siap kabarin lewat browser.' : status === 'denied' ? 'Notif ditolak. Cek pengaturan browser.' : 'Notif default.' });
+        }).catch(() => {
+          toast.push({ type: 'error', title: 'Gagal request notifikasi.' });
+        });
+      }
+    } else {
+      toast.push({ type: 'error', title: 'Browser tidak support notifikasi.' });
+    }
   };
 
   const openCS = () => {

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
 
 type ThemeMode = 'light' | 'dark' | 'auto';
 
@@ -8,7 +8,7 @@ type ThemeContextType = {
   setTheme: (mode: ThemeMode) => void;
 };
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const STORAGE_KEY = 'nk_theme';
 
 function getSystemTheme(): 'light' | 'dark' {
@@ -43,8 +43,4 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useTheme() {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useTheme must be used within ThemeProvider');
-  return ctx;
-}
+

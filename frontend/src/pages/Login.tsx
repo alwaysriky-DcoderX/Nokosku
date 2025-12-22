@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../app/auth';
+import { useAuth } from '../app/hooks/useAuth';
 import { Input } from '../ui/components/Input';
-import { useToast } from '../ui/components/Toast';
+import { useToast } from '../ui/hooks/useToast';
 import { Page } from '../ui/layouts/Page';
 
 export function Login() {
@@ -22,8 +22,9 @@ export function Login() {
       await login({ email, password });
       toast.push({ type: 'success', title: 'Masuk. lanjut ya.' });
       navigate('/home', { replace: true });
-    } catch (error: any) {
-      const message = error?.response?.data?.error || 'Bentar, sistem lagi ngambek. Coba lagi.';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { error?: string } } };
+      const message = err?.response?.data?.error || 'Bentar, sistem lagi ngambek. Coba lagi.';
       toast.push({ type: 'error', title: message });
     } finally {
       setLoading(false);
@@ -34,8 +35,8 @@ export function Login() {
     <Page>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <i className="bi bi-shield-lock" />
-          <span className="muted">Nokosku</span>
+          <img src="/vite.svg" alt="Vite" style={{ width: 24, height: 24 }} />
+          <span className="muted nokosku-font">Nokosku</span>
         </div>
         <h2 style={{ margin: '4px 0' }}>Welcome back!</h2>
         <form onSubmit={handleSubmit}>

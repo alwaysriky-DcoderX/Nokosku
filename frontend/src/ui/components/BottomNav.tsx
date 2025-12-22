@@ -10,7 +10,7 @@ type NavItem = {
 const defaultItems: NavItem[] = [
   { label: 'Home', icon: 'bi-house-door', path: '/home' },
   { label: 'Beli', icon: 'bi-bag-check', path: '/buy' },
-  { label: 'Riwayat', icon: 'bi-clock-history', path: '/orders' },
+  { label: 'Riwayat', icon: 'bi-clock-history', path: '/riwayat' },
   { label: 'Profil', icon: 'bi-person', path: '/profile' }
 ];
 

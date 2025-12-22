@@ -1,27 +1,34 @@
 import { http } from './http';
 
 export type ServiceItem = {
-  id: number | string;
-  name: string;
-  code?: string;
-  label?: string;
+  service_code: number;
+  service_name: string;
+  service_img: string;
 };
 
 export type CountryItem = {
+  number_id: number;
   name: string;
-  code?: string;
-  number_id?: number;
-  pricelist?: { provider_id: number; price: number }[];
+  img: string;
+  prefix: string;
+  iso_code: string;
+  stock_total: number;
+  pricelist: { provider_id: string | number; price: number; price_format: string; available: boolean }[];
 };
 
 export type OperatorItem = {
   id: number | string;
   name: string;
+  image?: string;
 };
 
 export async function getServices() {
   const { data } = await http.get<{ success: boolean; services: ServiceItem[] }>('/api/v1/orders/services');
-  return data.services;
+  return data.services.map(s => ({
+    service_code: s.service_code,
+    service_name: s.service_name,
+    service_img: s.service_img
+  }));
 }
 
 export async function getCountries(serviceId: string | number) {

@@ -12,7 +12,7 @@ export type Deposit = {
   expired_at?: string;
   expires_at?: string;
   paid_at?: string;
-  provider_response?: Record<string, any>;
+   provider_response?: Record<string, unknown>;
   created_at?: string;
 };
 
@@ -35,7 +35,7 @@ export async function createDeposit(payload: { nominal: number; metode: string }
 }
 
 export async function getDeposit(id: string | number) {
-  const { data } = await http.get<{ success: boolean; deposit: Deposit; status: string; provider?: any }>(
+   const { data } = await http.get<{ success: boolean; deposit: Deposit; status: string; provider?: Record<string, unknown> }>(
     `/api/v1/deposit/${id}`
   );
   return data;

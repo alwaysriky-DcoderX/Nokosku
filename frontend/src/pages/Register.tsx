@@ -2,8 +2,8 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '../ui/components/Input';
-import { useToast } from '../ui/components/Toast';
-import { useAuth } from '../app/auth';
+import { useToast } from '../ui/hooks/useToast';
+import { useAuth } from '../app/hooks/useAuth';
 import { Page } from '../ui/layouts/Page';
 
 export function Register() {
@@ -26,8 +26,9 @@ export function Register() {
       await register({ email, password });
       toast.push({ type: 'love', title: 'Akun jadi, lanjut yuk.' });
       navigate('/home', { replace: true });
-    } catch (error: any) {
-      const message = error?.response?.data?.error || 'Bentar, sistem lagi ngambek. Coba lagi.';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { error?: string } } };
+      const message = err?.response?.data?.error || 'Bentar, sistem lagi ngambek. Coba lagi.';
       toast.push({ type: 'error', title: message });
     } finally {
       setLoading(false);
@@ -38,14 +39,8 @@ export function Register() {
     <Page>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button
-            aria-label="Kembali"
-            onClick={() => navigate(-1)}
-            style={{ border: 'none', background: 'transparent', color: 'var(--text)' }}
-          >
-            <i className="bi bi-arrow-left" />
-          </button>
-          <span className="muted">Nokosku</span>
+          <img src="/vite.svg" alt="Vite" style={{ width: 24, height: 24 }} />
+          <span className="muted nokosku-font">Nokosku</span>
         </div>
         <h2 style={{ margin: '4px 0' }}>Bikin akun dulu</h2>
         <form onSubmit={handleSubmit}>

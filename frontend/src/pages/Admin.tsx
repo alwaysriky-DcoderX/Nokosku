@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '../app/auth';
+import { useAuth } from '../app/hooks/useAuth';
 import { Page } from '../ui/layouts/Page';
 import { http } from '../api/http';
 

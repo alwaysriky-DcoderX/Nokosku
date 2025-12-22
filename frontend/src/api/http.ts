@@ -24,7 +24,7 @@ export const http = axios.create({
 http.interceptors.request.use(config => {
   const token = getStoredToken();
   if (token) {
-    const headers: AxiosRequestHeaders = (config.headers as AxiosRequestHeaders) || {};
+    const headers: AxiosRequestHeaders = (config.headers as AxiosRequestHeaders) || ({} as AxiosRequestHeaders);
     headers.Authorization = `Bearer ${token}`;
     config.headers = headers;
   }

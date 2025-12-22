@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { createDeposit, getDepositMethods } from '../api/deposit';
 import { Page } from '../ui/layouts/Page';
 import { Input } from '../ui/components/Input';
-import { useToast } from '../ui/components/Toast';
+import { useToast } from '../ui/hooks/useToast';
 import { formatMoney } from '../utils/formatMoney';
 
 export function Deposit() {
@@ -34,8 +34,9 @@ export function Deposit() {
       const dep = await createDeposit({ nominal: amount, metode: method });
       toast.push({ type: 'hint', title: 'QR siap, scan ya.' });
       navigate(`/deposit/${dep.id}`);
-    } catch (error: any) {
-      const message = error?.response?.data?.error || 'Maaf, gagal bikin deposit.';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { error?: string } } };
+      const message = err?.response?.data?.error || 'Maaf, gagal bikin deposit.';
       toast.push({ type: 'error', title: message });
     } finally {
       setLoading(false);

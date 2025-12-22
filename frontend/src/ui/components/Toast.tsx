@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import { CatLottie } from './CatLottie';
 import clsx from 'classnames';
 
@@ -16,7 +16,7 @@ type ToastContextType = {
   push: (toast: Omit<ToastItem, 'id'>) => void;
 };
 
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
+export const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
@@ -42,7 +42,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const positionStyle = isDesktop
     ? { top: 18, right: 18, left: 'auto' as const }
-    : { bottom: 82, left: 12, right: 12 };
+    : { top: 82, left: 12, right: 12 };
 
   return (
     <ToastContext.Provider value={providerValue}>
@@ -71,6 +71,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 <strong>{toast.title}</strong>
                 {toast.message && <span className="muted">{toast.message}</span>}
               </div>
+              <button className="toast-close" onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}>
+                ×
+              </button>
             </div>
           ))}
         </div>
@@ -79,8 +82,4 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useToast() {
-  const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error('useToast harus di dalam ToastProvider');
-  return ctx;
-}
+

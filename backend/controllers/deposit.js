@@ -106,16 +106,17 @@ exports.status = async (req, res) => {
                     amount: deposit.nominal,
                     profit: 0
                 });
-                const io = req.app.get('io');
-                if (io) io.emit('deposit:paid', {
-                    user_id: deposit.user_id,
-                    deposit_id: deposit.id,
-                    nominal: deposit.nominal,
-                    metode: deposit.metode,
-                    status: 'success',
-                    message: `Deposit berhasil: Saldo bertambah Rp${deposit.nominal}.`
-                });
-            }
+                 console.log(`Deposit paid: User ${deposit.user_id}, Rp${deposit.nominal}`);
+                 const io = req.app.get('io');
+                 if (io) io.emit('deposit:paid', {
+                     user_id: deposit.user_id,
+                     deposit_id: deposit.id,
+                     nominal: deposit.nominal,
+                     metode: deposit.metode,
+                     status: 'success',
+                     message: `Deposit berhasil: Saldo bertambah Rp${deposit.nominal}.`
+                 });
+             }
         }
         // Response data deposit + API real
         res.json({ success:true, deposit, status:providerStatus, provider: apiResult });
@@ -142,14 +143,33 @@ exports.history = async (req, res) => {
 // Cancel deposit
 exports.cancel = async (req, res) => {
   try {
+    console.log(`Cancel attempt: id=${req.params.id}, user_id=${req.user.id}`);
     const deposit = await Deposit.findByPk(req.params.id);
+    console.log(`Deposit found:`, deposit ? { id: deposit.id, user_id: deposit.user_id, status: deposit.status } : 'null');
     if (!deposit || deposit.user_id !== req.user.id || deposit.status !== 'pending') {
+      console.log(`Cancel denied: !deposit=${!deposit}, user_mismatch=${deposit?.user_id !== req.user.id}, status=${deposit?.status}`);
       return res.status(400).json({ error: 'Deposit tidak bisa dicancel.' });
+    }
+    // Call Atlantic cancel API
+    if (deposit.metode === 'atlantic') {
+      console.log(`Calling Atlantic cancel for deposit ${deposit.id}, provider_id ${deposit.provider_id}`);
+      const cancelResp = await axios.post('https://atlantich2h.com/deposit/cancel', new URLSearchParams({
+        api_key: process.env.ATLANTIC_APIKEY,
+        id: deposit.provider_id
+      }), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+      console.log('Atlantic cancel response:', cancelResp.data);
+      if (!cancelResp.data.status) {
+        return res.status(400).json({ error: cancelResp.data.message || 'Gagal cancel di provider.' });
+      }
     }
     deposit.status = 'cancel';
     await deposit.save();
+    console.log(`Deposit canceled: User ${req.user.id}, ID ${req.params.id}`);
     res.json({ success: true, message: 'Deposit canceled.' });
   } catch (e) {
+    console.error('Cancel deposit error:', e.message);
     res.status(500).json({ error: 'Maaf, sistem error cancel.' });
   }
 };

@@ -6,8 +6,8 @@ import { Page } from '../ui/layouts/Page';
 import { Badge } from '../ui/components/Badge';
 import { CatLottie } from '../ui/components/CatLottie';
 import { copyText } from '../utils/copy';
-import { useToast } from '../ui/components/Toast';
-import { useSocket } from '../app/socket';
+import { useToast } from '../ui/hooks/useToast';
+import { useSocket } from '../app/hooks/useSocket';
 
 export function OrderDetail() {
   const { id } = useParams();
@@ -40,19 +40,21 @@ export function OrderDetail() {
 
   useEffect(() => {
     if (!socket) return;
-    const otpHandler = (payload: any) => {
-      if (payload?.order_id?.toString() === id) {
-        queryClient.invalidateQueries({ queryKey: ['order', id] });
-        toast.push({ type: 'success', title: 'OTP masuk! Langsung salin aja.' });
-        if (notifAllowed && payload?.otp) {
-          new Notification('OTP masuk!', {
-            body: `Dari nomor ${payload.nomor} — OTP ${payload.otp}`
-          });
-        }
-      }
-    };
-    const expiredHandler = (payload: any) => {
-      if (payload?.order_id?.toString() === id) {
+     const otpHandler = (payload: unknown) => {
+       const p = payload as { order_id?: string | number; otp?: string; nomor?: string };
+       if (p?.order_id?.toString() === id) {
+         queryClient.invalidateQueries({ queryKey: ['order', id] });
+         toast.push({ type: 'success', title: 'OTP masuk! Langsung salin aja.' });
+         if (notifAllowed && p?.otp) {
+           new Notification('OTP masuk!', {
+             body: `Dari nomor ${p.nomor} — OTP ${p.otp}`
+           });
+         }
+       }
+     };
+     const expiredHandler = (payload: unknown) => {
+       const p = payload as { order_id?: string | number };
+       if (p?.order_id?.toString() === id) {
         queryClient.invalidateQueries({ queryKey: ['order', id] });
         toast.push({ type: 'error', title: 'Waktunya habis, saldo kamu aman.' });
       }
@@ -85,8 +87,9 @@ export function OrderDetail() {
       await resendOtp(id);
       toast.push({ type: 'info', title: 'OTP dikirim ulang.' });
       refetch();
-    } catch (error: any) {
-      const message = error?.response?.data?.error || 'Gagal resend.';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { error?: string } } };
+      const message = err?.response?.data?.error || 'Gagal resend.';
       toast.push({ type: 'error', title: message });
     }
   };
@@ -97,8 +100,9 @@ export function OrderDetail() {
       await cancelOrder(id);
       toast.push({ type: 'info', title: 'Order dibatalkan.' });
       refetch();
-    } catch (error: any) {
-      const message = error?.response?.data?.error || 'Gagal cancel.';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { error?: string } } };
+      const message = err?.response?.data?.error || 'Gagal cancel.';
       toast.push({ type: 'error', title: message });
     }
   };
@@ -114,7 +118,7 @@ export function OrderDetail() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Badge label={order.status} tone={badgeTone as any} />
+            <Badge label={order.status} tone={badgeTone} />
             {order.expired_at && <div className="muted">{timeLeft}</div>}
           </div>
           <div className="card-plain">
