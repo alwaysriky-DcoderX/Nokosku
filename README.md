@@ -35,9 +35,9 @@
 ## Instalasi & Deployment
 
 ### Development
-1. Clone repo: `git clone <repo-url>`
-2. `npm install`
-3. Setup .env:
+1. Clone repo: `git clone https://github.com/IbraDecode/Nokosku`
+3. `npm install`
+4. Setup .env:
    ```
    DB_HOST=localhost
    DB_USER=root
@@ -46,13 +46,14 @@
    JWT_SECRET=your-secret
    RUMAHOTP_APIKEY=otp_...
    ATLANTIC_APIKEY=OtvBx...
+   FRONTEND_ORIGIN=*
    ```
-4. Migrate DB: `mysql -u root nokosku < infra/01_schema.sql`
-5. `npm start`
+5. Migrate DB: `mysql -u root nokosku < infra/01_schema.sql`
+6. `npm start`
 
 ### Production (Ubuntu 22.04)
 1. Server setup: `sudo apt update && sudo apt install -y nginx mysql-server nodejs npm redis-server`
-2. Clone & install: `git clone <repo> && cd nokosku && npm install --production`
+2. Clone & install: `git clone https://github.com/IbraDecode/Nokosku.git && cd nokosku && npm install --production`
 3. Setup .env production
 4. PM2: `pm2 start ecosystem.config.js && pm2 save && pm2 startup`
 5. Nginx: Copy `infra/nginx.conf`, enable, reload
